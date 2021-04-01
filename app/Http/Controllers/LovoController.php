@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Lovo\HiperusActions;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -16,11 +17,23 @@ class LovoController extends Controller
 {
     /**
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function getClients(Request $request): JsonResponse
     {
         $clientId = $request->client_id;
+
+        $validator = Validator::make($request->all(), [
+            'client_id' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'client_id' => $clientId,
+                'errors' => $validator->getMessageBag()
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
         try {
             $response = HiperusActions::GetPSTNNumberList(
                 $clientId
