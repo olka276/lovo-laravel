@@ -1,8 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 
 namespace App\Services;
 
+
+use GusApi\SearchReport;
 
 /**
  * Class GusService
@@ -11,12 +13,14 @@ namespace App\Services;
 class GusService
 {
     /**
-     * Refactors response string from API gus to key=>value array
+     * Transforms error response string into key - value array. Response
+     * has attributes separated by new line, and each of them is separated from
+     * value by colon. e.g. "attr1:abc\nattr2:xyz"
      *
      * @param $message
      * @return array
      */
-    public function refactorResponseMessage($message): array
+    public function getErrorMessage(string $message): array
     {
         $messageArray = [];
         $messagePart = explode("\n", $message);
@@ -32,7 +36,14 @@ class GusService
         return $messageArray;
     }
 
-    public function getNipDataArray($data) {
+    /**
+     * Transforms SearchReport object into necessary data array
+     *
+     * @param SearchReport $data
+     * @return array
+     */
+    public function getNipDataArray(SearchReport $data): array
+    {
         return [
             'nip'           => $data->getNip(),
             'regon'         => $data->getRegon(),
