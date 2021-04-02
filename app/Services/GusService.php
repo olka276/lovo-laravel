@@ -60,4 +60,63 @@ class GusService
             'poczta'        => $data->getPostCity()
         ];
     }
+
+    /**
+     * Returns status of session
+     *
+     * @param array $error
+     * @return bool
+     */
+    private function checkSessionStatus(array $error): bool
+    {
+        if(isset($error['StatusSesji'])) {
+            return $error['StatusSesji'] == 1;
+        } return true;
+    }
+
+    /**
+     * Returns service status from response
+     *
+     * @param array $error
+     * @return string
+     */
+    private function checkService(array $error): string
+    {
+        if(isset($error['StatusUslugi'])) {
+            switch($error['StatusUslugi']) {
+                case 0: {
+                    return 'Usluga niedostepna.';
+                }
+                case 2: {
+                    return 'Przerwa techniczna';
+                }
+                default: {
+                    return '';
+                }
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * Returns error message according to code
+     *
+     * @param array $error
+     * @return string
+     */
+    public function handleErrorCodes(array $error): string
+    {
+        if(!$this->checkSessionStatus($error)) {
+            return "Blad sesji.";
+        }
+
+        if(!empty($this->checkService($error))) {
+            return $this->checkService($error);
+        }
+
+        else {
+            return "Wystapil nieoczekiwany problem. Sprobuj ponownie pozniej.";
+        }
+    }
 }

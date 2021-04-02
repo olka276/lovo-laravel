@@ -80,7 +80,9 @@ class GusController extends Controller
 
             return response()->json([
                 'nip' => $nip,
-                'error' => $error['KomunikatTresc']
+                'error' => $this
+                    ->gusService
+                    ->handleErrorCodes($error)
             ]);
         }
     }
